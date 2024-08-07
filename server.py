@@ -1,5 +1,6 @@
-from email import message
 import json
+
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, flash, url_for
 
 
@@ -54,13 +55,19 @@ def purchasePlaces():
     club = [c for c in clubs if c['name'] == request.form['club']][0]
     placesRequired = int(request.form['places'])
 
+    competition_date = datetime.strptime(competition['date'], "%Y-%m-%d %H:%M:%S")
+    current_date = datetime.now()
+    
+    if competition_date < current_date:
+        flash('Cannot book places for a past competition')
+        return render_template('welcome.html', club=club, competitions=competitions)
+    
     if placesRequired > 12:
         flash('Cannot book more than 12 places')
         return render_template('welcome.html', club=club, competitions=competitions)
 
     if placesRequired > int(competition['numberOfPlaces']):
         flash('Not enough places available in the competition')
-
     elif placesRequired > int(club['points']):
         flash('Not enough points available in the club')
     else:
