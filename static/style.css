@@ -1,0 +1,21 @@
+body {
+    /* font-family: Arial, sans-serif; */
+    margin: 34px;
+}
+.club-container {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+.club-name {
+    font-weight: bold;
+}
+.club-points {
+    color: #555;
+}
+.logout{
+    position: relative;
+    float: right;
+    margin-right: 3rem;
+}
