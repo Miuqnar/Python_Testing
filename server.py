@@ -35,7 +35,8 @@ def showSummary():
     except IndexError:
         flash("Sorry, that email wasn't found")
         return redirect(url_for('index'))
-    return render_template('welcome.html', club=club, competitions=competitions)
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return render_template('welcome.html', club=club, competitions=competitions, current_time=current_time)
 
 
 @app.route('/book/<competition>/<club>')
@@ -60,21 +61,24 @@ def purchasePlaces():
     
     if competition_date < current_date:
         flash('Cannot book places for a past competition')
-        return render_template('welcome.html', club=club, competitions=competitions)
-    
-    if placesRequired > 12:
+    elif placesRequired > 12:
         flash('Cannot book more than 12 places')
-        return render_template('welcome.html', club=club, competitions=competitions)
-
-    if placesRequired > int(competition['numberOfPlaces']):
+    elif placesRequired > int(competition['numberOfPlaces']):
         flash('Not enough places available in the competition')
+    elif placesRequired <= 0:
+        flash('Number of places must be positive')
     elif placesRequired > int(club['points']):
         flash('Not enough points available in the club')
     else:
         competition['numberOfPlaces'] = int(competition['numberOfPlaces']) - placesRequired
         club['points'] = int(club['points']) - placesRequired
         flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, competitions=competitions)
+        
+    competitions_with_dates = [
+        {**comp, 'date': datetime.strptime(comp['date'], "%Y-%m-%d %H:%M:%S")}
+        for comp in competitions
+    ]
+    return render_template('welcome.html', club=club, competitions=competitions_with_dates, current_time=current_date)
 
 
 # [x]: Route added for points display 
