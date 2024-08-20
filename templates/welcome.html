@@ -23,15 +23,20 @@
     <a href="{{ url_for('viewClubPoints') }}">clubs</a>
 
     <h3>Competitions:</h3>
+    
     <ul>
         {% for comp in competitions%}
         <li>
             {{comp['name']}}<br />
             Date: {{comp['date']}}</br>
             Number of Places: {{comp['numberOfPlaces']}}
-            {%if comp['numberOfPlaces']|int >0%}
-            <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
-            {%endif%}
+            {% if comp['date'] > current_time %}
+                {%if comp['numberOfPlaces']|int > 0%}
+                    <a href="{{ url_for('book',competition=comp['name'],club=club['name']) }}">Book Places</a>
+                {%endif%}
+            {% else %}
+                <span>Competition has already passed</span>
+            {% endif %}
         </li>
         <hr />
         {% endfor %}
